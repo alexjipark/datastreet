@@ -5,6 +5,7 @@ import (
 	"github.com/tendermint/go-crypto"
 	. "github.com/tendermint/go-common"
 	"bytes"
+	tmsp "github.com/tendermint/tmsp/types"
 )
 
 /*
@@ -61,6 +62,17 @@ type TxOutput struct {
 func (txOut TxOutput) String() string {
 	return Fmt("TxOutput{%X,%v}", txOut.Address, txOut.Coins)
 }
+
+func (txIn TxInput) ValidateBasic() tmsp.Result {
+	// TBD - To Be Developed..
+	return tmsp.OK
+}
+
+func (txOut TxOutput) ValidateBasic() tmsp.Result {
+	// TBD - To Be Developed..
+	return tmsp.OK
+}
+
 
 //----------------------------------
 

@@ -8,9 +8,8 @@ import (
 	"github.com/alexjipark/datastreet/types"
 	"github.com/tendermint/go-wire"
 	"fmt"
-
-	sm "github.com/tendermint/basecoin/state"
 	"strings"
+	sm "github.com/alexjipark/datastreet/state"
 )
 
 const (

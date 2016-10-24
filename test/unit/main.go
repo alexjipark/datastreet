@@ -12,6 +12,11 @@ import (
 
 func main() {
 	testSendTx()
+	testQuery()
+}
+
+func testQuery(){
+
 }
 
 func testSendTx() {
