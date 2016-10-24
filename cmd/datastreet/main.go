@@ -52,7 +52,7 @@ func main() {
 
 type KeyValue struct {
 	Key string `json:"key"`
-	Value string `json:"value`
+	Value string `json:"value"`
 }
 
 func loadGenesis (filePath string) (kvz []KeyValue){

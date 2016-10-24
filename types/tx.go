@@ -80,7 +80,7 @@ type SendTx struct {
 	Fee 	int64		`json:"fee"`	// Fee
 	Gas	int64		`json:"fee"`	// Gas
 	Inputs	[]TxInput	`json:"inputs"`
-	Outputs	[]TxOutput	`json:"outputs`
+	Outputs	[]TxOutput	`json:"outputs"`
 }
 
 func (tx *SendTx) SignBytes(chainID string) []byte {

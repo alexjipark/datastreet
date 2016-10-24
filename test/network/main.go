@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	ws := rpcclient.NewWSClient("35.160.214.73:46657", "/websocket")
+	ws := rpcclient.NewWSClient("0.0.0.0:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
