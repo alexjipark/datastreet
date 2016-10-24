@@ -56,7 +56,7 @@ func (app *DataStreetApp) Info() string {
 
 
 func (app *DataStreetApp) SetOption(key string, value string) (log string) {
-
+/*
 	PluginName, key := splitKey(key)
 	if PluginName != PluginNameBase {
 		//Set option on plugin
@@ -79,6 +79,8 @@ func (app *DataStreetApp) SetOption(key string, value string) (log string) {
 		}
 	}
 	return "Unrecoginzed option key " + key
+*/
+	return ""
 }
 
 // tx is either "key=value" or just arbitrary bytes
@@ -206,6 +208,5 @@ func splitKey(key string) (prefix string, suffix string) {
 		keyParts := strings.SplitN(key, "/", 2)
 		return keyParts[0], keyParts[1]
 	}
-
 	return key, ""
 }
