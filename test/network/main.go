@@ -12,8 +12,8 @@ import (
 )
 
 func main() {
-	ws := rpcclient.NewWSClient("0.0.0.0:46657", "/websocket")
-	chainID := "test_chain_id"
+	ws := rpcclient.NewWSClient("35.160.214.73:46657", "/websocket")
+	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
 	if err != nil {
@@ -67,6 +67,7 @@ func main() {
 	//Write request
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
 	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
+	fmt.Println("request: ", request)
 	reqBytes := wire.JSONBytes(request)
 
 	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
@@ -74,4 +75,8 @@ func main() {
 		Exit("writing websocket request: " + err.Error())
 	}
 
+	// Wait Forever
+	TrapSignal(func() {
+		ws.Stop()
+	})
 }

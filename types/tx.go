@@ -43,11 +43,14 @@ type TxInput struct {
 	Sequence	int			`json:"sequence"`	// Must be 1 greater than last commit
 	Signature 	crypto.Signature	`json:"signature"`	// Depends on the PubKey type and the whole Tx
 	PubKey		crypto.PubKey		`json:"pub_key"`	// Is present iff Sequence == 0
+
+	// Unique Key For Data
+	DataIndex	string			`json:"data_index"'`	// Data Index
 }
 
 func (txIn TxInput) String() string {
-	return Fmt("TxInput{%X,%v,%v,%v,%v}", txIn.Address,
-			txIn.Coins, txIn.Sequence, txIn.Signature, txIn.PubKey)
+	return Fmt("TxInput{%X,%v,%v,%v,%v, %s}", txIn.Address,
+			txIn.Coins, txIn.Sequence, txIn.Signature, txIn.PubKey, txIn.DataIndex)
 }
 
 type TxOutput struct {
