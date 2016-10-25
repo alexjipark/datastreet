@@ -154,6 +154,7 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 		return tmsp.OK.SetLog("This type of query not yet supported")
 	case PluginTypeByteEyes:
 		// Should be implemented soon..
+
 		return app.eyesCli.QuerySync(query)
 		//return tmsp.OK.SetLog("Ok but not yet implemented")
 	}

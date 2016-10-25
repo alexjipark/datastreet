@@ -9,10 +9,26 @@ import (
 	"github.com/tendermint/go-wire"
 	"github.com/tendermint/go-rpc/types"
 	"github.com/gorilla/websocket"
-)
 
+)
+func testQuery(addr []byte){
+
+	/*
+	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
+	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
+	fmt.Println("request: ", request)
+	reqBytes := wire.JSONBytes(request)
+
+	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
+	if err != nil {
+		Exit("writing websocket request: " + err.Error())
+	}
+
+	 */
+
+}
 func main() {
-	ws := rpcclient.NewWSClient("0.0.0.0:46657", "/websocket")
+	ws := rpcclient.NewWSClient("35.161.51.6:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
@@ -39,7 +55,28 @@ func main() {
 	//Make a bunch of PrivateAccount
 	destAccount := test.PrivateAccountFromSecret("test1")
 
-	// Send coins to each account
+	// ====== Query
+	addr := root.Account.PubKey.Address()
+	fmt.Printf("Addr: %X", addr)
+	queryBytes := make([]byte, 1+ wire.ByteSliceSize(addr))
+	buf := queryBytes
+	buf[0] = 0x02
+	buf = buf[1:]
+	wire.PutByteSlice(buf, addr)
+	fmt.Println("query: ", queryBytes)
+
+	requestQ := rpctypes.NewRPCRequest("fakeid", "tmsp_query", Arr(queryBytes))
+	fmt.Println("request: ", requestQ)
+	reqBytesQ := wire.JSONBytes(requestQ)
+	fmt.Println("reqBytes: ", reqBytesQ)
+
+	err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
+	if err != nil {
+		Exit("writing websocket request: " + err.Error())
+	}
+
+
+	// ======= Send coins to each account
 	tx := &types.SendTx{
 		Inputs: []types.TxInput {
 			types.TxInput {
@@ -68,9 +105,9 @@ func main() {
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
 	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
 	fmt.Println("request: ", request)
-	reqBytes := wire.JSONBytes(request)
+	//reqBytes := wire.JSONBytes(request)
 
-	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
+	//err = ws.WriteMessage(websocket.TextMessage, reqBytes)
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
