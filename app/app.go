@@ -147,6 +147,10 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 	if len(query) == 0 {
 		return tmsp.ErrEncodingError.SetLog("Query cannot be zero length")
 	}
+
+	return app.eyesCli.QuerySync(query)
+
+	/*
 	typeByte := query[0]
 	query = query[1:]
 	switch typeByte {
@@ -160,7 +164,7 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 	}
 	return tmsp.ErrBaseUnknownPlugin.SetLog(
 		Fmt("Unknown plugin with type byte %X", typeByte))
-
+	*/
 /*
 	index, value, exists := app.state.Get(query)
 	resStr := Fmt("Index=%v value=%v exists=%v", index, string(value), exists)
