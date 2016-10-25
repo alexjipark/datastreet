@@ -56,7 +56,7 @@ func (app *DataStreetApp) Info() string {
 
 
 func (app *DataStreetApp) SetOption(key string, value string) (log string) {
-/*
+
 	PluginName, key := splitKey(key)
 	if PluginName != PluginNameBase {
 		//Set option on plugin
@@ -79,7 +79,7 @@ func (app *DataStreetApp) SetOption(key string, value string) (log string) {
 		}
 	}
 	return "Unrecoginzed option key " + key
-*/
+
 	return ""
 }
 
@@ -103,7 +103,7 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 	// Validate and Exec Tx
 	// TBD .. should be implemented
-	res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
+	//res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
 								// But it's utilized with AppTx (Smart Contract)
 	if  res.IsErr() {
 		return res.PrependLog("Error in AppendTx")
@@ -134,10 +134,12 @@ func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 
 	// Validate tx
 	// TBD .. should be implemented
-	res = sm.ExecTx(app.cacheState, nil, tx, true, nil)
+	/* res = sm.ExecTx(app.cacheState, nil, tx, true, nil)
+
 	if res.IsErr() {
 		return res.PrependLog("Error in CheckTx")
-	}
+	}*/
+
 	return tmsp.OK
 }
 
