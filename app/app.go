@@ -80,7 +80,6 @@ func (app *DataStreetApp) SetOption(key string, value string) (log string) {
 	}
 	return "Unrecoginzed option key " + key
 
-	return ""
 }
 
 // tx is either "key=value" or just arbitrary bytes
@@ -103,7 +102,7 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 	// Validate and Exec Tx
 	// TBD .. should be implemented
-	//res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
+	res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
 								// But it's utilized with AppTx (Smart Contract)
 	if  res.IsErr() {
 		return res.PrependLog("Error in AppendTx")
