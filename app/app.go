@@ -133,11 +133,11 @@ func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 
 	// Validate tx
 	// TBD .. should be implemented
-	/* res = sm.ExecTx(app.cacheState, nil, tx, true, nil)
+	res = sm.ExecTx(app.cacheState, nil, tx, true, nil)
 
 	if res.IsErr() {
 		return res.PrependLog("Error in CheckTx")
-	}*/
+	}
 
 	return tmsp.OK
 }
