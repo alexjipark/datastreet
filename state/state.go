@@ -5,6 +5,7 @@ import (
 	bctypes "github.com/tendermint/basecoin/types"
 	. "github.com/tendermint/go-common"
 	"github.com/tendermint/go-wire"
+	"fmt"
 )
 
 
@@ -72,7 +73,8 @@ func AccountKey(addr []byte) []byte {
 
 //
 func GetAccount (store bctypes.KVStore, addr []byte) *types.Account {
-	data := store.Get(AccountKey(addr))
+	//data := store.Get(AccountKey(addr))
+	data := store.Get(addr)
 	if len(data) == 0 {
 		return nil
 	}
@@ -87,5 +89,8 @@ func GetAccount (store bctypes.KVStore, addr []byte) *types.Account {
 
 func SetAccount (store bctypes.KVStore, addr []byte, acc *types.Account) {
 	accBytes := wire.BinaryBytes(acc)
-	store.Set (AccountKey(addr), accBytes)
+	//store.Set (AccountKey(addr), accBytes)
+	//===== Test
+	fmt.Printf("SetAccount : Key[%x] Value[%X]", addr, accBytes)
+	store.Set (addr, accBytes)
 }

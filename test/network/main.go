@@ -10,8 +10,6 @@ import (
 	"github.com/tendermint/go-rpc/types"
 	"github.com/gorilla/websocket"
 
-	"bytes"
-	"encoding/binary"
 )
 func testQuery(addr []byte){
 
@@ -57,6 +55,12 @@ func main() {
 	//Make a bunch of PrivateAccount
 	destAccount := test.PrivateAccountFromSecret("test1")
 
+	//====== Check Account
+	fmt.Printf("Private Key : %X\n", root.PrivKey)
+	fmt.Printf("Public Byte : %X\n", root.Account.PubKey.Bytes())
+	fmt.Printf("Public Addr : %X\n", root.Account.PubKey.Address())
+
+/*
 	//====== Byte Num Test
 	bufTest := new(bytes.Buffer)
 	var num uint16 = 0x02
@@ -65,27 +69,27 @@ func main() {
 		fmt.Println("binary.Write failed:", err)
 	}
 	fmt.Printf("BufTest : %X\n", bufTest.Bytes())
+*/
 
 	// ====== Query
 
-	addr := root.Account.PubKey.Address()
-	fmt.Printf("Addr: %X\n", addr)
+	addrBytes := root.Account.PubKey.Address()
+	fmt.Printf("Addr: %X\n", addrBytes)
 
-	addrBytes := append([]byte("base/a/"), addr...)
 	queryBytes := make([]byte, 1+ wire.ByteSliceSize(addrBytes))
-
+/*
 	addrBytesQ := append([]byte{0x02}, addrBytes...)
 	s := string(addrBytesQ)
 	fmt.Printf("%s\n", s)
-
+*/
 	buf := queryBytes
-	buf[0] = 0x02
+	buf[0] = 0x01	//Get TypeByte
 	buf = buf[1:]
 	wire.PutByteSlice(buf, addrBytes)
 
 	fmt.Printf("query: %X\n", queryBytes)
 
-	requestQ := rpctypes.NewRPCRequest("fakeid", "tmsp_query", Arr(addrBytes))
+	requestQ := rpctypes.NewRPCRequest("fakeid", "tmsp_query", Arr(queryBytes))
 	fmt.Println("request: ", requestQ)
 	reqBytesQ := wire.JSONBytes(requestQ)
 	fmt.Println("reqBytes: ", reqBytesQ)

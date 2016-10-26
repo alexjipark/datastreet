@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"encoding/json"
 	"reflect"
+	"github.com/alexjipark/datastreet/test"
+	"github.com/tendermint/go-wire"
 )
 
 func main() {
@@ -17,7 +19,7 @@ func main() {
 
 	// basecoin
 	eyesPtr := flag.String("eyes", "local", "MerkleEyes Address, or 'local' for embedded")
-	genesisFilePath := flag.String("genesis", "", "Genesis File, if any")
+	genesisFilePath := flag.String("genesis", "/Users/Park-jihun/Desktop/1_BlockChain/5_Tendermint/workspace/testnet_basecoin/bctest/app/genesis.json", "Genesis File, if any")
 	flag.Parse()
 
 	// basecoin, connect to MerkleEyes
@@ -37,6 +39,27 @@ func main() {
 			fmt.Println(Fmt("Set %v=%v. Log: %v", kv.Key, kv.Value, log))
 		}
 	}
+
+	//===== Test =====
+	/*
+	root := test.PrivateAccountFromSecret("test")
+
+	//====== Check Account
+	fmt.Printf("Private Key : %X\n", root.PrivKey)
+	fmt.Printf("Public Byte : %X\n", root.Account.PubKey.Bytes())
+	fmt.Printf("Public Addr : %X\n", root.Account.PubKey.Address())
+
+	addrBytes := root.Account.PubKey.Address()
+	queryBytes := make([]byte, 1+wire.ByteSliceSize(addrBytes))
+	buf := queryBytes
+	buf[0] = 0x01
+	buf = buf[1:]
+	wire.PutByteSlice(buf, addrBytes)
+
+	//queryResult := dataStreet.Query(queryBytes))
+	*/
+	//================
+
 
 	// Start the Listener
 	svr, err := server.NewServer(*addrPtr, *tmspPtr, dataStreet)

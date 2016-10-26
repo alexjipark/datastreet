@@ -16,6 +16,10 @@ func (coin Coin) String() string {
 
 type Coins []Coin
 
+func (coins Coins) String() string {
+	return fmt.Sprintf("Coins(%v)", len(coins))
+}
+
 func (coinsA Coins) IsEqual(coinsB Coins) bool {
 	if len(coinsA) != len(coinsB) {
 		return false

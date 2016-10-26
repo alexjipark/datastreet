@@ -74,6 +74,12 @@ func (app *DataStreetApp) SetOption(key string, value string) (log string) {
 			if err != nil {
 				return "Error decoding acc message: " + err.Error()
 			}
+
+			//====== Check Account =====
+			fmt.Printf("Public Key  : %X\n", acc.PubKey.Address())
+			fmt.Printf("Public Byte : %X\n", acc.PubKey.Bytes())
+			//==========================
+
 			app.bcstate.SetAccount(acc.PubKey.Address(), acc)
 			return "Success"
 		}
