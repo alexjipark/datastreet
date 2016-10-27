@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"encoding/json"
 	"reflect"
-	/*
+
 	"github.com/alexjipark/datastreet/test"
 	"github.com/tendermint/go-wire"
-	*/
+
 )
 
 func main() {
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	//===== Test =====
-	/*
+
 	root := test.PrivateAccountFromSecret("test")
 
 	//====== Check Account
@@ -58,8 +58,9 @@ func main() {
 	buf = buf[1:]
 	wire.PutByteSlice(buf, addrBytes)
 
-	//queryResult := dataStreet.Query(queryBytes))
-	*/
+	queryResult := dataStreet.Query(queryBytes)
+	fmt.Println("\n", queryResult)
+
 	//================
 
 

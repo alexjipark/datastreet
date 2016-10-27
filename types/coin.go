@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"strings"
+	"bytes"
 )
 
 type Coin struct {
@@ -17,7 +18,13 @@ func (coin Coin) String() string {
 type Coins []Coin
 
 func (coins Coins) String() string {
-	return fmt.Sprintf("Coins(%v)", len(coins))
+
+	var buffer bytes.Buffer
+	for _,pcoin := range coins {
+		buffer.WriteString(pcoin.String())
+	}
+	return buffer.String()
+	//return fmt.Sprintf("Coins(%v)", len(coins))
 }
 
 func (coinsA Coins) IsEqual(coinsB Coins) bool {

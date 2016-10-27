@@ -10,6 +10,10 @@ import (
 	"github.com/tendermint/go-rpc/types"
 	"github.com/gorilla/websocket"
 
+	tmsp "github.com/tendermint/tmsp/types"
+
+	"encoding/json"
+	"encoding/hex"
 )
 func testQuery(addr []byte){
 
@@ -27,6 +31,10 @@ func testQuery(addr []byte){
 	 */
 
 }
+type ResultData struct {
+	Result tmsp.Result `json:"result"`
+}
+
 func main() {
 	ws := rpcclient.NewWSClient("35.161.51.6:46657", "/websocket")
 	chainID := "chain-AMUKE0"
@@ -46,6 +54,34 @@ func main() {
 				break
 			}
 			fmt.Println(counter, "res:", Blue(string(res)))
+
+			//==== Check the result
+			//res - *json.RawMessage
+			var result []interface{}
+			err := json.Unmarshal([]byte(string(res)), &result)
+			if err != nil {
+				fmt.Println("Error in Unmarshalling with ", err.Error())
+			}
+			fmt.Printf("result num :%v\n" , len(result))
+			fmt.Println(result[1])	// map
+			fmt.Println(result[0])	// 112
+
+			resData := result[1].(map[string]interface{})["result"].(map[string]interface{})["Data"]
+
+			//fmt.Println([]byte(str))
+			hexBytes, err := hex.DecodeString(resData.(string))
+			fmt.Println(hexBytes)
+
+			var acc *types.Account
+			err = wire.ReadBinaryBytes(hexBytes, &acc)
+			if err != nil {
+				fmt.Printf("Error Reading Account %X error: %v",
+					resData, err.Error())
+			}
+			fmt.Printf("Account : %X\n", acc.PubKey)
+			fmt.Printf("Balance : %v\n", acc.Balance)
+			fmt.Printf("Sequence : %v", acc.Sequence)
+
 		}
 	}()
 
@@ -60,28 +96,13 @@ func main() {
 	fmt.Printf("Public Byte : %X\n", root.Account.PubKey.Bytes())
 	fmt.Printf("Public Addr : %X\n", root.Account.PubKey.Address())
 
-/*
-	//====== Byte Num Test
-	bufTest := new(bytes.Buffer)
-	var num uint16 = 0x02
-	err = binary.Write(bufTest, binary.LittleEndian, num)
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	}
-	fmt.Printf("BufTest : %X\n", bufTest.Bytes())
-*/
-
 	// ====== Query
 
 	addrBytes := root.Account.PubKey.Address()
 	fmt.Printf("Addr: %X\n", addrBytes)
 
 	queryBytes := make([]byte, 1+ wire.ByteSliceSize(addrBytes))
-/*
-	addrBytesQ := append([]byte{0x02}, addrBytes...)
-	s := string(addrBytesQ)
-	fmt.Printf("%s\n", s)
-*/
+
 	buf := queryBytes
 	buf[0] = 0x01	//Get TypeByte
 	buf = buf[1:]
