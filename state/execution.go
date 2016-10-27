@@ -51,10 +51,12 @@ func ExecTx(state *State, pgz *bctypes.Plugins, tx bctypes.Tx, isCheckTx bool, e
 			return res.PrependLog("in validateInputsAdvanced()")
 		}
 		outTotal := sumOutputs(tx.Outputs)
-		if !inTotal.IsEqual(outTotal.Plus(types.Coins{{"", tx.Fee}})) {
-			return tmsp.ErrBaseInvalidOutput.AppendLog("Input total != output total + fees")
+		if tx.Fee != 0 {
+			if !inTotal.IsEqual(outTotal.Plus(types.Coins{{"", tx.Fee}})) {
+				return tmsp.ErrBaseInvalidOutput.AppendLog("Input total != output total + fees")
+			}
+			fees = fees.Plus(types.Coins{{"", tx.Fee}})
 		}
-		fees = fees.Plus(types.Coins{{"", tx.Fee}})
 
 		// TODO: Fee validation for SendTx
 

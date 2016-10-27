@@ -127,14 +127,14 @@ func main() {
 			types.TxInput {
 				Address: root.Account.PubKey.Address(),
 				PubKey: root.Account.PubKey,
-				Coins:	types.Coins {{"", 10}},
+				Coins:	types.Coins {{"USD", 10}},
 				Sequence: sequence,
 			},
 		},
 		Outputs: []types.TxOutput {
 			types.TxOutput {
 				Address: destAccount.Account.PubKey.Address(),
-				Coins: types.Coins{{"", 9}},
+				Coins: types.Coins{{"USD", 9}},
 			},
 		},
 	}
@@ -150,9 +150,9 @@ func main() {
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
 	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
 	fmt.Println("request: ", request)
-	//reqBytes := wire.JSONBytes(request)
+	reqBytes := wire.JSONBytes(request)
 
-	//err = ws.WriteMessage(websocket.TextMessage, reqBytes)
+	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
