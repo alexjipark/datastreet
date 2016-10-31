@@ -106,6 +106,7 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 	fmt.Println("About to validate and exec..")
 
+/*
 	// Validate and Exec Tx
 	// TBD .. should be implemented
 	res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
@@ -113,6 +114,9 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 	if  res.IsErr() {
 		return res.PrependLog("Error in AppendTx")
 	}
+
+*/
+
 /*
 	parts := strings.Split(string(tx),"=")
 	if len(parts) == 2 {

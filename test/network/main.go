@@ -115,7 +115,7 @@ func main() {
 	reqBytesQ := wire.JSONBytes(requestQ)
 	fmt.Println("reqBytes: ", reqBytesQ)
 
-	err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
+	//err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
@@ -150,7 +150,6 @@ func main() {
 	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
 	fmt.Println("request: ", request)
 	reqBytes := wire.JSONBytes(request)
-
 	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())

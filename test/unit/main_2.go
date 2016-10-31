@@ -119,6 +119,10 @@ func testNetwork(){
 	}
 	fmt.Println("\nCommit: ", res)
 
+	resEnd := datastApp.EndBlock(0)
+	if len(resEnd) == 0 {
+		fmt.Println("EndBlock.. no difference..\n")
+	}
 
 	//=== Query
 	queryResultTest = datastApp.Query(queryBytes)
