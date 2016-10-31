@@ -102,11 +102,36 @@ func testNetwork(){
 	//Write request
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
 
-	res := datastApp.AppendTx(txBytes)
-	fmt.Println(res)
+	//res := datastApp.AppendTx(txBytes)
+	datastApp.BeginBlock(0)
+	res := datastApp.CheckTx(txBytes)
+	fmt.Println("\nCheckTX: ", res)
 	if res.IsErr() {
 		Exit(Fmt("Failed :%v", res.Error()))
+	} else {
+		res = datastApp.AppendTx(txBytes)
+		fmt.Println("\nAppendTx: ", res)
 	}
+
+	res = datastApp.Commit()
+	if res.IsErr() {
+		Exit (Fmt("Failed :%v", res.Error()))
+	}
+	fmt.Println("\nCommit: ", res)
+
+
+	//=== Query
+	queryResultTest = datastApp.Query(queryBytes)
+	fmt.Println("\n", queryResultTest)
+
+	err = wire.ReadBinaryBytes( queryResultTest.Data, &queryAccTest)
+	if err != nil {
+		fmt.Println("Err in ReadBinaryBytes.. ", err.Error())
+	}
+	fmt.Printf("Test's Account : %X\n", queryAccTest.PubKey)
+	fmt.Printf("Balance 1 : %v\n", queryAccTest.Balance)
+	fmt.Printf("Sequece 1 : %v", queryAccTest.Sequence)
+
 }
 
 

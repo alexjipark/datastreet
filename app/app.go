@@ -195,7 +195,6 @@ func (app *DataStreetApp) Commit() tmsp.Result {
 // TMSP::InitChain
 func (app *DataStreetApp) InitChain(validators []*tmsp.Validator) {
 	// TBD .. should be implemented soon
-
 }
 
 // TMSP::BeginBlock
