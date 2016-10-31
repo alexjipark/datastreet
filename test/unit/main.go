@@ -81,6 +81,16 @@ func testSendTx() {
 	queryResultTest1 := datastApp.Query(queryTest1)
 	fmt.Println("\n", queryResultTest1)
 
+	var queryAcc1 *types.Account
+	err := wire.ReadBinaryBytes (queryResultTest1.Data, &queryAcc1)
+	if err != nil {
+		fmt.Println("err in ReadBinaryBytes..", err.Error())
+	}
+	fmt.Printf("Account 1 : %X\n", queryAcc1.PubKey)
+	fmt.Printf("Balance 1 : %v\n", queryAcc1.Balance)
+	fmt.Printf("Sequece 1 : %v", queryAcc1.Sequence)
+
+
 	addrTest2 := test2PrivateAcc.Account.PubKey.Address()
 	queryTest2 := make([]byte, 1+wire.ByteSliceSize(addrTest2))
 	buf2 := queryTest2
@@ -90,6 +100,16 @@ func testSendTx() {
 
 	queryResultTest2 := datastApp.Query(queryTest2)
 	fmt.Println("\n", queryResultTest2)
+
+	var queryAcc2 *types.Account
+	err = wire.ReadBinaryBytes (queryResultTest2.Data, &queryAcc2)
+	if err != nil {
+		fmt.Println("err in ReadBinaryBytes..", err.Error())
+	}
+	fmt.Printf("Account 2 : %X\n", queryAcc2.PubKey)
+	fmt.Printf("Balance 2 : %v\n", queryAcc2.Balance)
+	fmt.Printf("Sequece 2 : %v", queryAcc2.Sequence)
+
 
 
 

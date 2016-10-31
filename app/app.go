@@ -153,7 +153,6 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 	if len(query) == 0 {
 		return tmsp.ErrEncodingError.SetLog("Query cannot be zero length")
 	}
-
 	return app.eyesCli.QuerySync(query)
 
 	/*
