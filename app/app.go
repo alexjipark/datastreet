@@ -187,8 +187,6 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 // TMSP::Commit
 func (app *DataStreetApp) Commit() tmsp.Result {
 
-	return tmsp.OK
-
 	//Commit eyes
 	res := app.eyesCli.CommitSync()
 	if res.IsErr() {
@@ -209,7 +207,6 @@ func (app *DataStreetApp) InitChain(validators []*tmsp.Validator) {
 // TMSP::BeginBlock
 func (app *DataStreetApp) BeginBlock(height uint64) {
 
-	return
 	// TBD .. should be implemented soon
 	app.cacheState = app.bcstate.CacheWrap()
 }
