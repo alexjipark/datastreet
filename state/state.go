@@ -91,6 +91,6 @@ func SetAccount (store bctypes.KVStore, addr []byte, acc *types.Account) {
 	accBytes := wire.BinaryBytes(acc)
 	//store.Set (AccountKey(addr), accBytes)
 	//===== Test
-	fmt.Printf("SetAccount : Key[%x] Value[%X]", addr, accBytes)
+	fmt.Printf("\nSetAccount : Key[%x] Value[%X]", addr, accBytes)
 	store.Set (addr, accBytes)
 }

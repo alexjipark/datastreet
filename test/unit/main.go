@@ -8,6 +8,8 @@ import (
 	"github.com/alexjipark/datastreet/types"
 	"github.com/tendermint/go-wire"
 	. "github.com/tendermint/go-common"
+	"encoding/json"
+	"reflect"
 )
 
 func main() {
@@ -27,14 +29,20 @@ func testSendTx() {
 	datastApp.SetOption("base/chainID", chainID)
 	fmt.Println(datastApp.Info())
 
-	test1PrivateAcc := test.PrivateAccountFromSecret("test1")
-	test2PrivateAcc := test.PrivateAccountFromSecret("test2")
+	test1PrivateAcc := test.PrivateAccountFromSecret("test")
+	test2PrivateAcc := test.PrivateAccountFromSecret("test1")
 
+	kvz := loadGenesis("/Users/Park-jihun/Desktop/1_BlockChain/5_Tendermint/workspace/testnet_basecoin/bctest/app/genesis.json")
+	for _, kv := range kvz {
+		log := datastApp.SetOption(kv.Key, kv.Value)
+		fmt.Println(Fmt("Set %v=%v. Log: %v", kv.Key, kv.Value, log))
+	}
+/*
 	// Seed DataStreetApp with account
 	test1Acc := test1PrivateAcc.Account
 	test1Acc.Balance = types.Coins{{"USD",1000}}
 	fmt.Println(datastApp.SetOption("base/account", string(wire.JSONBytes(test1Acc))))
-
+*/
 	// Construct a SendTx signature
 	tx := &types.SendTx{
 		Fee: 0,
@@ -110,7 +118,48 @@ func testSendTx() {
 	fmt.Printf("Balance 2 : %v\n", queryAcc2.Balance)
 	fmt.Printf("Sequece 2 : %v", queryAcc2.Sequence)
 
+}
 
+//============= Temp Testing =============//
 
+type KeyValue struct {
+	Key string `json:"key"`
+	Value string `json:"value"`
+}
 
+func loadGenesis (filePath string) (kvz []KeyValue){
+	kvz_ := []interface{}{}
+	bytes, err := ReadFile(filePath)
+	if err != nil {
+		Exit("Loading Genesis File.." + err.Error())
+	}
+	err = json.Unmarshal(bytes, &kvz_)
+	if err != nil {
+		Exit ("Parsing Genesis File.." + err.Error())
+	}
+	if len(kvz_)%2 != 0 {
+		Exit ("Genesis Cannot have an odd number of Items. Format = [key1, value1, key2, value2...]")
+	}
+
+	for i:=0; i <len(kvz_); i+=2 {
+		keyIfc := kvz_[i]
+		valueIfc := kvz_[i+1]
+		var key, value string
+		key, ok := keyIfc.(string)
+
+		if !ok {
+			Exit(Fmt("Genesis Had invalid key %v of type %v", keyIfc, reflect.TypeOf(keyIfc)))
+		}
+		if value_ , ok := valueIfc.(string); ok {
+			value = value_
+		} else {
+			valueBytes, err := json.Marshal(valueIfc)
+			if err != nil {
+				Exit(Fmt("Genesis had invalid value %v:%v", value_, err.Error()))
+			}
+			value = string(valueBytes)
+		}
+		kvz = append(kvz, KeyValue{key,value})
+	}
+	return kvz
 }

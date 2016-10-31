@@ -85,7 +85,30 @@ type SendTx struct {
 
 func (tx *SendTx) SignBytes(chainID string) []byte {
 	signBytes := wire.BinaryBytes(chainID)
+	sigz := make( []crypto.Signature, len(tx.Inputs))
+	for i, input := range tx.Inputs {
+		sigz[i] = input.Signature
+		tx.Inputs[i].Signature = nil
+	}
+	signBytes = append(signBytes, wire.BinaryBytes(tx)...)
+	for i := range tx.Inputs {
+		tx.Inputs[i].Signature = sigz[i]
+	}
 	return signBytes
+	/*
+
+	signBytes := wire.BinaryBytes(chainID)
+	sigz := make([]crypto.Signature, len(tx.Inputs))
+	for i, input := range tx.Inputs {
+		sigz[i] = input.Signature
+		tx.Inputs[i].Signature = nil
+	}
+	signBytes = append(signBytes, wire.BinaryBytes(tx)...)
+	for i := range tx.Inputs {
+		tx.Inputs[i].Signature = sigz[i]
+	}
+	return signBytes
+	 */
 }
 
 func (tx *SendTx) SetSignature(addr []byte, sig crypto.Signature) bool {
