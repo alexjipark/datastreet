@@ -36,7 +36,7 @@ type ResultData struct {
 }
 
 func main() {
-	ws := rpcclient.NewWSClient("35.162.52.35:46657", "/websocket")
+	ws := rpcclient.NewWSClient("35.161.26.62:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
