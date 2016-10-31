@@ -133,7 +133,6 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 
-	return tmsp.OK
 
 	if len(txBytes) > maxTxSize {
 		return tmsp.ErrBaseEncodingError.AppendLog("Tx size exceeds maximum")
@@ -159,8 +158,6 @@ func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 
 func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 
-
-	return tmsp.OK
 
 	if len(query) == 0 {
 		return tmsp.ErrEncodingError.SetLog("Query cannot be zero length")
@@ -192,8 +189,6 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 // TMSP::Commit
 func (app *DataStreetApp) Commit() tmsp.Result {
 
-
-	return tmsp.OK
 
 	//Commit eyes
 	res := app.eyesCli.CommitSync()

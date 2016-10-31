@@ -11,8 +11,6 @@ import (
 
 	tmsp "github.com/tendermint/tmsp/types"
 
-	"encoding/json"
-	"encoding/hex"
 	"github.com/gorilla/websocket"
 )
 func testQuery(addr []byte){
@@ -54,7 +52,7 @@ func main() {
 				break
 			}
 			fmt.Println(counter, "res:", Blue(string(res)))
-
+/*
 			//==== Check the result
 			//res - *json.RawMessage
 			var result []interface{}
@@ -81,8 +79,9 @@ func main() {
 			fmt.Printf("Account : %X\n", acc.PubKey)
 			fmt.Printf("Balance : %v\n", acc.Balance)
 			fmt.Printf("Sequence : %v", acc.Sequence)
-
+*/
 		}
+
 	}()
 
 	// Get the root account
