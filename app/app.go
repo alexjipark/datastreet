@@ -92,6 +92,8 @@ func (app *DataStreetApp) SetOption(key string, value string) (log string) {
 // basecoin - TMSP::AppendTx
 func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
+	return tmsp.OK
+
 	// basecoin
 	if len(txBytes) > maxTxSize {
 		return tmsp.ErrBaseEncodingError.AppendLog("Tx size exceeds maximum")
@@ -106,7 +108,7 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 	fmt.Println("About to validate and exec..")
 
-/*
+
 	// Validate and Exec Tx
 	// TBD .. should be implemented
 	res = sm.ExecTx(app.bcstate, nil, tx,false, nil)	// plugin is not used in SendTx in sm
@@ -115,7 +117,7 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 		return res.PrependLog("Error in AppendTx")
 	}
 
-*/
+
 
 /*
 	parts := strings.Split(string(tx),"=")
@@ -130,6 +132,9 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 }
 
 func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
+
+	return tmsp.OK
+
 	if len(txBytes) > maxTxSize {
 		return tmsp.ErrBaseEncodingError.AppendLog("Tx size exceeds maximum")
 	}
@@ -153,6 +158,9 @@ func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 }
 
 func (app *DataStreetApp) Query(query []byte) tmsp.Result {
+
+
+	return tmsp.OK
 
 	if len(query) == 0 {
 		return tmsp.ErrEncodingError.SetLog("Query cannot be zero length")
@@ -184,6 +192,9 @@ func (app *DataStreetApp) Query(query []byte) tmsp.Result {
 // TMSP::Commit
 func (app *DataStreetApp) Commit() tmsp.Result {
 
+
+	return tmsp.OK
+
 	//Commit eyes
 	res := app.eyesCli.CommitSync()
 	if res.IsErr() {
@@ -199,10 +210,12 @@ func (app *DataStreetApp) Commit() tmsp.Result {
 // TMSP::InitChain
 func (app *DataStreetApp) InitChain(validators []*tmsp.Validator) {
 	// TBD .. should be implemented soon
+
 }
 
 // TMSP::BeginBlock
 func (app *DataStreetApp) BeginBlock(height uint64) {
+	return
 	// TBD .. should be implemented soon
 	app.cacheState = app.bcstate.CacheWrap()
 }

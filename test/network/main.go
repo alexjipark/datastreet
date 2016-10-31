@@ -8,12 +8,12 @@ import (
 	"github.com/alexjipark/datastreet/types"
 	"github.com/tendermint/go-wire"
 	"github.com/tendermint/go-rpc/types"
-	"github.com/gorilla/websocket"
 
 	tmsp "github.com/tendermint/tmsp/types"
 
 	"encoding/json"
 	"encoding/hex"
+	"github.com/gorilla/websocket"
 )
 func testQuery(addr []byte){
 
@@ -36,7 +36,7 @@ type ResultData struct {
 }
 
 func main() {
-	ws := rpcclient.NewWSClient("35.161.26.62:46657", "/websocket")
+	ws := rpcclient.NewWSClient("35.160.162.167:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
@@ -115,7 +115,7 @@ func main() {
 	reqBytesQ := wire.JSONBytes(requestQ)
 	fmt.Println("reqBytes: ", reqBytesQ)
 
-	//err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
+	err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
@@ -147,10 +147,12 @@ func main() {
 
 	//Write request
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
-	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_sync", Arr(txBytes))
+	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_async", Arr(txBytes))
 	fmt.Println("request: ", request)
+
 	reqBytes := wire.JSONBytes(request)
 	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
+
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
