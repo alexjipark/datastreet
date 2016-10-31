@@ -10,6 +10,7 @@ import (
 
 	//"github.com/tendermint/basecoin/state"
 	//"log"
+	"fmt"
 )
 
 // If the tx is invalid, a TMSP error will be returned.
@@ -51,6 +52,8 @@ func ExecTx(state *State, pgz *bctypes.Plugins, tx bctypes.Tx, isCheckTx bool, e
 			return res.PrependLog("in validateInputsAdvanced()")
 		}
 		outTotal := sumOutputs(tx.Outputs)
+
+		// Have to be Resolved
 		if tx.Fee != 0 {
 			if !inTotal.IsEqual(outTotal.Plus(types.Coins{{"", tx.Fee}})) {
 				return tmsp.ErrBaseInvalidOutput.AppendLog("Input total != output total + fees")
@@ -232,7 +235,8 @@ func validateInputAdvanced(acc *types.Account, signBytes []byte, in types.TxInpu
 	// Check sequence/coins
 	seq, balance := acc.Sequence, acc.Balance
 	if seq+1 != in.Sequence {
-		return tmsp.ErrBaseInvalidSequence.AppendLog(Fmt("Got %v, expected %v. (acc.seq=%v)", in.Sequence, seq+1, acc.Sequence))
+		fmt.Printf("Err..Got %v, expected %v. (acc.seq=%v)", in.Sequence, seq+1, acc.Sequence)
+		//return tmsp.ErrBaseInvalidSequence.AppendLog(Fmt("Got %v, expected %v. (acc.seq=%v)", in.Sequence, seq+1, acc.Sequence))
 	}
 	// Check amount
 	if !balance.IsGTE(in.Coins) {

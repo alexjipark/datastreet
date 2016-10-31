@@ -36,7 +36,7 @@ type ResultData struct {
 }
 
 func main() {
-	ws := rpcclient.NewWSClient("35.160.145.128:46657", "/websocket")
+	ws := rpcclient.NewWSClient("35.162.52.35:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
@@ -128,17 +128,16 @@ func main() {
 				Address: root.Account.PubKey.Address(),
 				PubKey: root.Account.PubKey,
 				Coins:	types.Coins {{"USD", 10}},
-				Sequence: sequence,
+				Sequence: sequence + 1,
 			},
 		},
 		Outputs: []types.TxOutput {
 			types.TxOutput {
 				Address: destAccount.Account.PubKey.Address(),
-				Coins: types.Coins{{"USD", 9}},
+				Coins: types.Coins{{"USD", 10}},
 			},
 		},
 	}
-	sequence += 1
 
 	//Sign request
 	signBytes := tx.SignBytes(chainID)
