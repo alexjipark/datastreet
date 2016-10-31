@@ -131,6 +131,8 @@ func (app *DataStreetApp) AppendTx(txBytes []byte) (res tmsp.Result) {
 
 func (app *DataStreetApp) CheckTx(txBytes []byte) (res tmsp.Result) {
 
+	return tmsp.OK
+
 	if len(txBytes) > maxTxSize {
 		return tmsp.ErrBaseEncodingError.AppendLog("Tx size exceeds maximum")
 	}
