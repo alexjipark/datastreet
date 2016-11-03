@@ -10,6 +10,7 @@ import (
 	. "github.com/tendermint/go-common"
 	"encoding/json"
 	"reflect"
+
 )
 
 func main() {
@@ -22,6 +23,20 @@ func testQuery(){
 }
 
 func testSendTx() {
+
+	/*
+	testStr := "010000000000000000000000000000000001010114D9B727742AA29FA638DC63D70813C976014C4CE001010103555344000000000000000A010101F610525139E31087E36F8FD438F13BC16F477E99391298845A985C2D2E614B0C79CFD08661F4F3DA5EE3705FA0774C0F09EF1F47A9FFB7CD9146E4A43F6E69010167D3B5EAF0C0BF6B5A602D359DAECC86A7A74053490EC37AE08E71360587C870000101011412BB36B57DA6E4EC8229F4D99E14567F1E528B0F01010103555344000000000000000A"
+	hexBytes, err := hex.DecodeString(testStr)
+	fmt.Println(hexBytes)
+
+	var curTx *types.Tx
+	errtx := wire.ReadBinaryBytes(hexBytes, &curTx)
+	if errtx != nil {
+		fmt.Println(errtx.Error())
+	}
+	*/
+
+
 	eyesCli := eyescli.NewLocalClient()
 	chainID := "test_chain_id"
 	datastApp := datastreet.NewDataStreet(eyesCli)
@@ -51,14 +66,14 @@ func testSendTx() {
 			types.TxInput{
 				Address: test1PrivateAcc.Account.PubKey.Address(),
 				PubKey:  test1PrivateAcc.Account.PubKey,
-				Coins: types.Coins{{"USD",10}},
+				Coins: types.Coins{{"KRW",10}},
 				Sequence: 1,
 			},
 		},
 		Outputs: []types.TxOutput {
 			types.TxOutput{
 				Address: test2PrivateAcc.Account.PubKey.Address(),
-				Coins: types.Coins{{"USD",10}},
+				Coins: types.Coins{{"KRW",10}},
 			},
 		},
 	}
@@ -73,10 +88,13 @@ func testSendTx() {
 	// Write Request
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
 	res := datastApp.AppendTx(txBytes)
-	fmt.Println(res)
+	fmt.Println("\nAppendTx :",res)
 	if res.IsErr() {
 		Exit(Fmt("Failed :%v", res.Error()))
 	}
+
+	res = datastApp.Commit()
+	fmt.Println("\nCommit: ", res)
 
 	//==== Query ====//
 	addrTest1 := test1PrivateAcc.Account.PubKey.Address()

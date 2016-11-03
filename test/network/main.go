@@ -12,6 +12,9 @@ import (
 	tmsp "github.com/tendermint/tmsp/types"
 
 	"github.com/gorilla/websocket"
+
+	tdtypes "github.com/tendermint/tendermint/types"
+	"bytes"
 )
 func testQuery(addr []byte){
 
@@ -34,15 +37,15 @@ type ResultData struct {
 }
 
 func main() {
-	ws := rpcclient.NewWSClient("35.160.162.167:46657", "/websocket")
+	ws := rpcclient.NewWSClient("35.160.145.128:46657", "/websocket")
 	chainID := "chain-AMUKE0"
 
 	_,err := ws.Start()
 	if err != nil {
 		Exit(err.Error())
 	}
+/*
 	var counter = 0;
-
 	// Read a bunch of responses
 	go func() {
 		for {
@@ -52,41 +55,13 @@ func main() {
 				break
 			}
 			fmt.Println(counter, "res:", Blue(string(res)))
-/*
-			//==== Check the result
-			//res - *json.RawMessage
-			var result []interface{}
-			err := json.Unmarshal([]byte(string(res)), &result)
-			if err != nil {
-				fmt.Println("Error in Unmarshalling with ", err.Error())
-			}
-			fmt.Printf("result num :%v\n" , len(result))
-			fmt.Println(result[1])	// map
-			fmt.Println(result[0])	// 112
-
-			resData := result[1].(map[string]interface{})["result"].(map[string]interface{})["Data"]
-
-			//fmt.Println([]byte(str))
-			hexBytes, err := hex.DecodeString(resData.(string))
-			fmt.Println(hexBytes)
-
-			var acc *types.Account
-			err = wire.ReadBinaryBytes(hexBytes, &acc)
-			if err != nil {
-				fmt.Printf("Error Reading Account %X error: %v",
-					resData, err.Error())
-			}
-			fmt.Printf("Account : %X\n", acc.PubKey)
-			fmt.Printf("Balance : %v\n", acc.Balance)
-			fmt.Printf("Sequence : %v", acc.Sequence)
-*/
 		}
 
 	}()
-
+*/
 	// Get the root account
 	root := test.PrivateAccountFromSecret("test")
-	sequence := int(0)
+	sequence := int(14)
 	//Make a bunch of PrivateAccount
 	destAccount := test.PrivateAccountFromSecret("test1")
 
@@ -95,45 +70,20 @@ func main() {
 	fmt.Printf("Public Byte : %X\n", root.Account.PubKey.Bytes())
 	fmt.Printf("Public Addr : %X\n", root.Account.PubKey.Address())
 
-	// ====== Query
-
-	addrBytes := root.Account.PubKey.Address()
-	fmt.Printf("Addr: %X\n", addrBytes)
-
-	queryBytes := make([]byte, 1+ wire.ByteSliceSize(addrBytes))
-
-	buf := queryBytes
-	buf[0] = 0x01	//Get TypeByte
-	buf = buf[1:]
-	wire.PutByteSlice(buf, addrBytes)
-
-	fmt.Printf("query: %X\n", queryBytes)
-
-	requestQ := rpctypes.NewRPCRequest("fakeid", "tmsp_query", Arr(queryBytes))
-	fmt.Println("request: ", requestQ)
-	reqBytesQ := wire.JSONBytes(requestQ)
-	fmt.Println("reqBytes: ", reqBytesQ)
-
-	err = ws.WriteMessage(websocket.TextMessage, reqBytesQ)
-	if err != nil {
-		Exit("writing websocket request: " + err.Error())
-	}
-
-
 	// ======= Send coins to each account
 	tx := &types.SendTx{
 		Inputs: []types.TxInput {
 			types.TxInput {
 				Address: root.Account.PubKey.Address(),
 				PubKey: root.Account.PubKey,
-				Coins:	types.Coins {{"USD", 10}},
+				Coins:	types.Coins {{"KRW", 10}},
 				Sequence: sequence + 1,
 			},
 		},
 		Outputs: []types.TxOutput {
 			types.TxOutput {
 				Address: destAccount.Account.PubKey.Address(),
-				Coins: types.Coins{{"USD", 10}},
+				Coins: types.Coins{{"KRW", 10}},
 			},
 		},
 	}
@@ -144,20 +94,52 @@ func main() {
 	tx.Inputs[0].Signature = sig
 	fmt.Println("tx: ", tx)
 
-	//Write request
 	txBytes := wire.BinaryBytes(struct{types.Tx}{tx})
+
+	//==Event Subscribe..
+	eid := tdtypes.EventStringTx(tdtypes.Tx(txBytes))
+	if err = ws.Subscribe(eid); err != nil {
+		fmt.Println("Subscribe Error .. ", err.Error())
+	}
+	defer func() {
+		ws.Unsubscribe(eid)
+	}()
+
+	//Write request
 	request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_async", Arr(txBytes))
+	//request := rpctypes.NewRPCRequest("fakeid", "broadcast_tx_commit", Arr(txBytes))
 	fmt.Println("request: ", request)
+
 
 	reqBytes := wire.JSONBytes(request)
 	err = ws.WriteMessage(websocket.TextMessage, reqBytes)
-
 	if err != nil {
 		Exit("writing websocket request: " + err.Error())
 	}
+
+	//waitForEvent(t, wsc, eid, true, func() {}, func(eid string, b interface{}) error {
+	test.WaitForEvent(ws, eid, true, func(){}, func(eid string, b interface{}) error {
+		evt, ok := b.(tdtypes.EventDataTx)
+		if !ok {
+			fmt.Println("Get Wrong Event Type ", b)
+		}else {
+			if bytes.Compare(evt.Tx, txBytes) != 0 {
+				fmt.Println("Event Returned different tx")
+			}
+			fmt.Println("Event: ", evt)
+			fmt.Println("Event Tx :", evt.Tx)
+			fmt.Println("Event Tx Hash: ", evt.Tx.Hash())
+			fmt.Println("Event Code :", evt.Code)
+			fmt.Println("Event Log :", evt.Log)
+			fmt.Println("Event Result :", evt.Result)
+		}
+
+		return nil
+	})
 
 	// Wait Forever
 	TrapSignal(func() {
 		ws.Stop()
 	})
 }
+

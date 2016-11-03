@@ -11,6 +11,7 @@ import (
 	eyescli "github.com/tendermint/merkleeyes/client"
 	"encoding/json"
 	"reflect"
+	"encoding/hex"
 )
 
 func main() {
@@ -41,6 +42,10 @@ func testNetwork(){
 	fmt.Printf("Private Key : %X\n", root.PrivKey)
 	fmt.Printf("Public Byte : %X\n", root.Account.PubKey.Bytes())
 	fmt.Printf("Public Addr : %X\n", root.Account.PubKey.Address())
+
+	hex_root_addr := hex.EncodeToString(root.Account.PubKey.Address())
+	hex_dest_addr := hex.EncodeToString(destAccount.Account.PubKey.Address())
+	fmt.Printf("root's Address[%s].. dst's Address[%s]\n", hex_root_addr, hex_dest_addr)
 
 	// ====== Query
 
