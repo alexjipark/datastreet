@@ -11,6 +11,7 @@ import (
 	//"github.com/tendermint/basecoin/state"
 	//"log"
 	"fmt"
+	"bytes"
 )
 
 // If the tx is invalid, a TMSP error will be returned.
@@ -24,11 +25,11 @@ func ExecTx(state *State, pgz *bctypes.Plugins, tx bctypes.Tx, isCheckTx bool, e
 	switch tx := tx.(type) {
 	case *types.SendTx:
 		// Validate inputs and outputs, basic
-		res := validateInputsBasic(tx.Inputs)
+		res := validateInputsBasic(tx.Inputs)		// To Be Implemented..
 		if res.IsErr() {
 			return res.PrependLog("in validateInputsBasic()")
 		}
-		res = validateOutputsBasic(tx.Outputs)
+		res = validateOutputsBasic(tx.Outputs)		// To Be Implemented
 		if res.IsErr() {
 			return res.PrependLog("in validateOutputsBasic()")
 		}
@@ -39,6 +40,7 @@ func ExecTx(state *State, pgz *bctypes.Plugins, tx bctypes.Tx, isCheckTx bool, e
 			return res.PrependLog("in getInputs()")
 		}
 
+		// alexjipark - if Tx.Input = Tx.Output.. it would be related to "Data Ownership"
 		// Get or make outputs.
 		accounts, res = getOrMakeOutputs(state, accounts, tx.Outputs)
 		if res.IsErr() {
@@ -53,7 +55,7 @@ func ExecTx(state *State, pgz *bctypes.Plugins, tx bctypes.Tx, isCheckTx bool, e
 		}
 		outTotal := sumOutputs(tx.Outputs)
 
-		// Have to be Resolved
+		// Have to be Resolved.. alexjipark
 		if tx.Fee != 0 {
 			if !inTotal.IsEqual(outTotal.Plus(types.Coins{{"", tx.Fee}})) {
 				return tmsp.ErrBaseInvalidOutput.AppendLog("Input total != output total + fees")
@@ -261,6 +263,24 @@ func validateOutputsBasic(outs []types.TxOutput) (res tmsp.Result) {
 	return tmsp.OK
 }
 
+// alexjipark - Temp code. should be Re-Implemented with data.go
+func checkRequestForDataOwnership(ins []types.TxInput, outs []types.TxOutput) (res tmsp.Result) {
+	if len(ins) != 1 {
+		res = tmsp.ErrInternalError
+	}
+
+	if len(outs) != 1 {
+		res = tmsp.ErrInternalError
+	}
+
+	if bytes.Compare( ins[0].Address, outs[0].Address) != 0 {
+		res = tmsp.OK
+	}
+
+	return res
+}
+
+
 func sumOutputs(outs []types.TxOutput) (total types.Coins) {
 	for _, out := range outs {
 		total = total.Plus(out.Coins)
@@ -295,3 +315,5 @@ func adjustByOutputs(state types.AccountSetter, accounts map[string]*types.Accou
 		}
 	}
 }
+
+

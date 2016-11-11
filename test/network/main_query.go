@@ -83,7 +83,6 @@ func main() {
 			fmt.Printf("Balance : %v\n", acc.Balance)
 			fmt.Printf("Sequence : %v", acc.Sequence)
 
-
 		}
 
 	}()
